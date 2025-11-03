@@ -143,9 +143,17 @@
                     </div>
 
                     <!-- Nút đặt hàng -->
-                    <button onclick="checkout()" class="w-full bg-gradient-orange text-white py-4 rounded-xl hover:shadow-2xl transition font-bold text-lg">
-                        <i class="fas fa-check-circle mr-2"></i>Xác nhận đặt hàng
-                    </button>
+                    <button onclick="checkout()" 
+        class="w-full bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 
+               text-white py-4 rounded-xl font-bold text-lg 
+               shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300
+               relative overflow-hidden group">
+    <span class="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 
+                 opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-300"></span>
+    <i class="fas fa-check-circle mr-2 animate-pulse"></i>
+    <span class="relative z-10">Xác nhận đặt hàng</span>
+</button>
+
                 </div>
             </div>
         </div>
