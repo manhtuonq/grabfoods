@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - FoodMood</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .gradient-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-green-500 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="flex items-center justify-between py-4">
+                <a href="index.html" class="text-white hover:text-gray-200 transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Quay lại
+                </a>
+                <h1 class="text-2xl font-bold text-white">
+                    <i class="fas fa-shopping-cart mr-2"></i>Giỏ hàng
+                </h1>
+                <div class="w-20"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Danh sách món -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-list mr-2 text-orange-600"></i>Món đã chọn (<span id="itemCount">0</span>)
+                    </h3>
+                    <div id="cartItems" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- Tổng kết đơn hàng -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-receipt mr-2 text-orange-600"></i>Thông tin đơn hàng
+                    </h3>
+
+                    <!-- Địa chỉ giao hàng -->
+                    <div class="mb-6">
+                        <label class="font-bold text-gray-700 mb-2 block">
+                            <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>Địa chỉ giao hàng
+                        </label>
+                        <textarea id="address" placeholder="Nhập địa chỉ giao hàng..." 
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl outline-none focus:border-orange-500 resize-none" 
+                                  rows="3"></textarea>
+                    </div>
+
+                    <!-- Tùy chọn đặc biệt -->
+                    <div class="bg-gray-50 rounded-xl p-4 space-y-3 mb-6">
+                        <h4 class="font-bold text-gray-800 mb-3">
+                            <i class="fas fa-sliders-h mr-2"></i>Tùy chọn
+                        </h4>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="greenDelivery" class="w-5 h-5 text-orange-600 rounded">
+                            <span class="text-sm group-hover:text-orange-600 transition">
+                                <i class="fas fa-leaf text-green-600 mr-2"></i>Giao hàng xanh
+                            </span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="groupOrder" class="w-5 h-5 text-orange-600 rounded">
+                            <span class="text-sm group-hover:text-orange-600 transition">
+                                <i class="fas fa-users text-blue-600 mr-2"></i>Chế độ đặt nhóm
+                            </span>
+                        </label>
+                    </div>
+
+                    <!-- Mã giảm giá -->
+                    <div class="mb-6">
+                        <label class="font-bold text-gray-700 mb-2 block">
+                            <i class="fas fa-ticket-alt mr-2 text-yellow-600"></i>Mã giảm giá
+                        </label>
+                        <div class="flex">
+                            <input type="text" id="promoCode" placeholder="Nhập mã..." 
+                                   class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-l-xl outline-none focus:border-orange-500">
+                            <button onclick="applyPromo()" class="bg-gradient-orange text-white px-6 rounded-r-xl hover:shadow-lg transition font-medium">
+                                Áp dụng
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Chi tiết giá -->
+                    <div class="border-t-2 border-gray-200 pt-6 mb-6">
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between text-gray-600">
+                                <span>Tạm tính:</span>
+                                <span id="subtotal">0₫</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Phí giao hàng:</span>
+                                <span class="text-green-600 font-medium">Miễn phí</span>
+                            </div>
+                            <div class="flex justify-between text-gray-600">
+                                <span>Giảm giá:</span>
+                                <span id="discount" class="text-red-600">-0₫</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between mb-3 text-xl border-t-2 border-gray-200 pt-4">
+                            <span class="font-bold text-gray-800">Tổng cộng:</span>
+                            <span id="total" class="font-bold text-orange-600">0₫</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span><i class="fas fa-fire text-orange-500 mr-1"></i>Tổng calo:</span>
+                            <span id="totalCalories">0 kcal</span>
+                        </div>
+                    </div>
+
+                    <!-- Phương thức thanh toán -->
+                    <div class="mb-6">
+                        <h4 class="font-bold text-gray-700 mb-3">
+                            <i class="fas fa-credit-card mr-2"></i>Phương thức thanh toán
+                        </h4>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <button onclick="selectPayment('zalopay')" class="payment-btn border-2 border-blue-500 text-blue-500 py-3 rounded-xl text-sm hover:bg-blue-50 transition font-medium">
+                                <i class="fas fa-wallet mr-1"></i>ZaloPay
+                            </button>
+                            <button onclick="selectPayment('momo')" class="payment-btn border-2 border-pink-500 text-pink-500 py-3 rounded-xl text-sm hover:bg-pink-50 transition font-medium">
+                                <i class="fas fa-mobile-alt mr-1"></i>MoMo
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="selectPayment('atm')" class="payment-btn border-2 border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50 transition font-medium">
+                                <i class="fas fa-credit-card mr-1"></i>Thẻ ATM
+                            </button>
+                            <button onclick="selectPayment('cash')" class="payment-btn border-2 border-gray-300 text-gray-600 py-3 rounded-xl text-sm hover:bg-gray-50 transition font-medium">
+                                <i class="fas fa-money-bill-wave mr-1"></i>Tiền mặt
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Nút đặt hàng -->
+                    <button onclick="checkout()" class="w-full bg-gradient-orange text-white py-4 rounded-xl hover:shadow-2xl transition font-bold text-lg">
+                        <i class="fas fa-check-circle mr-2"></i>Xác nhận đặt hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="fixed top-20 right-4 z-50 hidden"></div>
+
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let selectedPayment = null;
+        let discountAmount = 0;
+
+        function displayCart() {
+            const cartItems = document.getElementById('cartItems');
+            const itemCount = document.getElementById('itemCount');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fas fa-shopping-cart text-gray-300 text-6xl mb-4"></i>
+                        <p class="text-gray-500 text-lg mb-2">Giỏ hàng trống</p>
+                        <p class="text-gray-400 text-sm mb-4">Hãy thêm món ăn yêu thích vào giỏ hàng!</p>
+                        <a href="index.html" class="inline-block bg-gradient-orange text-white px-6 py-3 rounded-xl hover:shadow-lg transition font-medium">
+                            <i class="fas fa-shopping-bag mr-2"></i>Đặt món ngay
+                        </a>
+                    </div>
+                `;
+                itemCount.textContent = '0';
+            } else {
+                cartItems.innerHTML = cart.map(item => `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:shadow-md transition">
+                        <div class="flex items-center space-x-4 flex-1">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 rounded-xl object-cover">
+                            <div class="flex-1">
+                                <p class="font-bold text-gray-800">${item.name}</p>
+                                <p class="text-sm text-gray-500">${item.restaurant}</p>
+                                <p class="text-orange-600 font-bold mt-1">${item.price.toLocaleString()}₫</p>
+                                <p class="text-xs text-gray-500"><i class="fas fa-fire text-orange-500 mr-1"></i>${item.calories} kcal</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeQuantity(${item.id}, -1)" class="w-10 h-10 bg-white rounded-full hover:bg-orange-100 transition shadow-md flex items-center justify-center">
+                                <i class="fas fa-minus text-orange-600"></i>
+                            </button>
+                            <span class="w-10 text-center font-bold text-lg">${item.quantity}</span>
+                            <button onclick="changeQuantity(${item.id}, 1)" class="w-10 h-10 bg-white rounded-full hover:bg-orange-100 transition shadow-md flex items-center justify-center">
+                                <i class="fas fa-plus text-orange-600"></i>
+                            </button>
+                            <button onclick="removeFromCart(${item.id})" class="w-10 h-10 bg-red-50 rounded-full hover:bg-red-100 transition ml-2 flex items-center justify-center">
+                                <i class="fas fa-trash text-red-500"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+                itemCount.textContent = cart.length;
+            }
+            
+            updatePricing();
+        }
+
+        function changeQuantity(itemId, change) {
+            const item = cart.find(i => i.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(i => i.id !== itemId);
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+            }
+        }
+
+        function removeFromCart(itemId) {
+            cart = cart.filter(i => i.id !== itemId);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+            showNotification('Đã xóa món khỏi giỏ hàng', 'info');
+        }
+
+        function updatePricing() {
+            const subtotalAmount = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalCalories = cart.reduce((sum, item) => sum + (item.calories * item.quantity), 0);
+            const totalAmount = subtotalAmount - discountAmount;
+            
+            document.getElementById('subtotal').textContent = subtotalAmount.toLocaleString() + '₫';
+            document.getElementById('discount').textContent = '-' + discountAmount.toLocaleString() + '₫';
+            document.getElementById('total').textContent = totalAmount.toLocaleString() + '₫';
+            document.getElementById('totalCalories').textContent = totalCalories + ' kcal';
+        }
+
+        function applyPromo() {
+            const code = document.getElementById('promoCode').value.toUpperCase();
+            const promoCodes = {
+                'GIAM50': 50000,
+                'GIAM100': 100000,
+                'FOOD20': 20000
+            };
+            
+            if (promoCodes[code]) {
+                discountAmount = promoCodes[code];
+                showNotification(`Áp dụng mã thành công! Giảm ${discountAmount.toLocaleString()}₫`, 'success');
+                updatePricing();
+            } else {
+                showNotification('Mã giảm giá không hợp lệ!', 'error');
+            }
+        }
+
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-orange-500');
+            });
+            event.target.closest('button').classList.add('ring-2', 'ring-orange-500');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Giỏ hàng trống! Vui lòng thêm món ăn.', 'warning');
+                return;
+            }
+            
+            const address = document.getElementById('address').value.trim();
+            if (!address) {
+                showNotification('Vui lòng nhập địa chỉ giao hàng!', 'warning');
+                return;
+            }
+            
+            if (!selectedPayment) {
+                showNotification('Vui lòng chọn phương thức thanh toán!', 'warning');
+                return;
+            }
+            
+            showNotification('🎉 Đặt hàng thành công!\n\n📍 Đang tìm tài xế gần bạn...\n⏱️ Thời gian dự kiến: 25 phút\n💬 Bạn có thể chat trực tiếp với tài xế', 'success');
+            
+            setTimeout(() => {
+                cart = [];
+                localStorage.setItem('cart', JSON.stringify(cart));
+                window.location.href = 'index.html';
+            }, 3000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-times-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            notification.innerHTML = `
+                <div class="${colors[type]} text-white px-6 py-4 rounded-2xl shadow-2xl animate-slide-in flex items-start space-x-3 max-w-md">
+                    <i class="fas ${icons[type]} text-2xl mt-1"></i>
+                    <div><p class="font-medium whitespace-pre-line">${message}</p></div>
+                </div>
+            `;
+            
+            notification.classList.remove('hidden');
+            setTimeout(() => notification.classList.add('hidden'), 4000);
+        }
+
+        displayCart();
+    </script>
+</body>
+</html>

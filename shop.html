@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrabFood - Cửa hàng</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-slide-in { animation: slideIn 0.5s ease-out; }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+        .food-card { transition: all 0.3s ease; }
+        .food-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .ai-suggestion {
+            animation: slideInRight 0.5s ease-out;
+        }
+        .ai-pulse {
+            animation: pulse 2s infinite;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Header -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-3 max-w-7xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <h1 class="text-3xl font-bold text-green-600">GrabFood</h1>
+                </div>
+                
+                <div class="hidden md:flex flex-1 max-w-2xl mx-8">
+                    <div class="relative w-full">
+                        <input type="text" id="searchInput" placeholder="Tìm món ăn..." 
+                               class="w-full px-4 py-2.5 border-2 border-green-500 rounded-l-full focus:outline-none focus:border-green-600"
+                               oninput="searchFood()">
+                        <button class="absolute right-0 top-0 bottom-0 bg-green-500 hover:bg-green-600 text-white px-6 rounded-r-full transition">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex items-center space-x-6">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-phone-alt text-green-600 text-xl"></i>
+                        <div>
+                            <div class="text-xs text-gray-500">Hỗ trợ 24/7</div>
+                            <div class="text-sm font-semibold">(+84) 9876-54321</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="bg-green-500 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 max-w-7xl">
+            <div class="flex items-center justify-between">
+                <div class="relative">
+                    <button onclick="toggleCategories()" 
+                            class="bg-white text-gray-800 px-6 py-3 rounded-full font-semibold hover:shadow-lg transition flex items-center space-x-2">
+                        <span>Danh mục</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="categoriesDropdown" class="hidden absolute top-full left-0 mt-2 bg-white rounded-lg shadow-xl p-4 w-64 z-50">
+                        <div class="space-y-2">
+                            <button onclick="filterByCategory('all')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-utensils text-green-600 mr-2"></i>Tất cả món</button>
+                            <button onclick="filterByCategory('com')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-bowl-rice text-orange-600 mr-2"></i>Cơm</button>
+                            <button onclick="filterByCategory('pho')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-bowl-food text-red-600 mr-2"></i>Phở & Bún</button>
+                            <button onclick="filterByCategory('banh')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-bread-slice text-yellow-600 mr-2"></i>Bánh mì</button>
+                            <button onclick="filterByCategory('nuong')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-fire text-red-600 mr-2"></i>Đồ nướng</button>
+                            <button onclick="filterByCategory('lau')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-pot-food text-orange-600 mr-2"></i>Lẩu</button>
+                            <button onclick="filterByCategory('uong')" class="w-full text-left px-4 py-2 hover:bg-green-50 rounded-lg transition"><i class="fas fa-mug-hot text-blue-600 mr-2"></i>Đồ uống</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <nav class="hidden lg:flex items-center space-x-8 py-3">
+                    <a href="index.html" class="text-white hover:text-gray-200 font-medium transition">Trang chủ</a>
+                    <a href="shop.html" class="text-white hover:text-gray-200 font-medium transition border-b-2 border-white pb-1">Cửa hàng</a>
+                    <a href="giohang.html" class="text-white hover:text-gray-200 font-medium transition">Giỏ hàng</a>
+                    <a href="login.html" class="text-white hover:text-gray-200 font-medium transition">Tài khoản</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button onclick="showFavorites()" class="relative hover:scale-110 transition bg-white rounded-full w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-heart text-green-600 text-lg"></i>
+                        <span id="favoriteCount" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">0</span>
+                    </button>
+                    <button onclick="goToCart()" class="relative hover:scale-110 transition bg-white rounded-full w-10 h-10 flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-green-600 text-lg"></i>
+                        <span id="cartCount" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">0</span>
+                    </button>
+                    <button class="lg:hidden text-white" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- AI Suggestion Box -->
+    <div id="aiSuggestion" class="fixed right-6 bottom-6 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-2xl shadow-2xl p-6 max-w-sm z-50 ai-suggestion hidden">
+        <button onclick="closeAISuggestion()" class="absolute top-2 right-2 text-white hover:text-gray-200">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="flex items-center mb-3">
+            <div class="bg-white rounded-full p-3 mr-3 ai-pulse">
+                <i class="fas fa-robot text-purple-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">AI Gợi ý</h3>
+                <p class="text-xs text-purple-200">Món ăn được yêu thích</p>
+            </div>
+        </div>
+        <div id="aiSuggestionContent" class="space-y-3">
+            <!-- Dynamic content here -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Breadcrumb -->
+        <div class="mb-6 text-sm text-gray-600">
+            <a href="index.html" class="hover:text-green-600">Trang chủ</a>
+            <span class="mx-2">/</span>
+            <span class="text-green-600 font-semibold">Cửa hàng</span>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterByCategory('all')" class="filter-btn active px-6 py-2 rounded-full border-2 border-green-500 font-medium transition">
+                        Tất cả
+                    </button>
+                    <button onclick="filterByCategory('bestseller')" class="filter-btn px-6 py-2 rounded-full border-2 border-gray-300 font-medium transition hover:border-green-500">
+                        <i class="fas fa-fire text-orange-500 mr-1"></i>Bán chạy
+                    </button>
+                    <button onclick="filterByCategory('new')" class="filter-btn px-6 py-2 rounded-full border-2 border-gray-300 font-medium transition hover:border-green-500">
+                        <i class="fas fa-sparkles text-yellow-500 mr-1"></i>Mới
+                    </button>
+                    <button onclick="filterByCategory('sale')" class="filter-btn px-6 py-2 rounded-full border-2 border-gray-300 font-medium transition hover:border-green-500">
+                        <i class="fas fa-tag text-red-500 mr-1"></i>Giảm giá
+                    </button>
+                </div>
+                <select onchange="sortProducts(this.value)" class="px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-green-500 focus:outline-none">
+                    <option value="default">Sắp xếp</option>
+                    <option value="price-asc">Giá: Thấp đến cao</option>
+                    <option value="price-desc">Giá: Cao đến thấp</option>
+                    <option value="name">Tên: A-Z</option>
+                    <option value="rating">Đánh giá cao nhất</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            <!-- Products will be dynamically loaded here -->
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="hidden text-center py-12">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
+            <p class="mt-4 text-gray-600">Đang tải món ăn...</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-green-50 pt-16 pb-8">
+        <div class="container mx-auto px-6 max-w-7xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+                <!-- Logo and Social -->
+                <div>
+                    <div class="mb-6">
+                        <svg class="h-12" viewBox="0 0 200 50" fill="none">
+                            <text x="0" y="35" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#00B14F">GrabFood</text>
+                        </svg>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="#" class="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition">
+                            <i class="fab fa-facebook-f text-sm"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition">
+                            <i class="fab fa-twitter text-sm"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition">
+                            <i class="fab fa-instagram text-sm"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full border-2 border-gray-800 flex items-center justify-center hover:bg-gray-800 hover:text-white transition">
+                            <i class="fab fa-youtube text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+    
+                <!-- Về Grab -->
+                <div>
+                    <h3 class="font-bold text-gray-900 mb-4 text-lg">Về Grab</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Inside Grab</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Quan hệ đầu tư</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Địa chỉ</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Tin tưởng & an toàn</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Hợp Tác Cùng Grab -->
+                <div>
+                    <h3 class="font-bold text-gray-900 mb-4 text-lg">Hợp Tác Cùng Grab</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">GrabFood</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">GrabMart</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Hướng Dẫn</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Financing</a></li>
+                    </ul>
+                </div>
+    
+                <!-- Doanh Nghiệp / Công Ty -->
+                <div>
+                    <h3 class="font-bold text-gray-900 mb-4 text-lg">Doanh Nghiệp / Công Ty</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">GrabAds</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">GrabGift</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">GrabExpress</a></li>
+                        <li><a href="#" class="text-gray-700 hover:text-green-600 transition text-sm">Dịch vụ giao hàng công ty</a></li>
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- Bottom Footer -->
+            <div class="border-t border-gray-300 pt-8">
+                <div class="flex flex-col lg:flex-row justify-between items-center gap-6">
+                    <p class="text-gray-700 text-sm">
+                        Copyright © 2025 <span class="font-bold">GrabFood</span> | All Rights Reserved. Designed by <span class="font-bold">GrabFood</span>.
+                    </p>
+                    <div class="flex items-center space-x-3">
+                        <img src="https://img.icons8.com/color/48/visa.png" alt="Visa" class="h-8 w-auto">
+                        <img src="https://img.icons8.com/color/48/mastercard.png" alt="Mastercard" class="h-8 w-auto">
+                        <img src="https://img.icons8.com/color/48/amex.png" alt="Amex" class="h-8 w-auto">
+                        <img src="https://img.icons8.com/color/48/paypal.png" alt="PayPal" class="h-8 w-auto">
+                        <img src="https://img.icons8.com/color/48/discover.png" alt="Discover" class="h-8 w-auto">
+                        <img src="https://img.icons8.com/color/48/bank-cards.png" alt="Bank" class="h-8 w-auto">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Food Data with restaurant and calories info
+        const foods = [
+            {id: 1, name: 'Cơm tấm sườn bì', category: 'com', price: 45000, image: '🍚', rating: 4.8, orders: 2345, tags: ['bestseller'], discount: 0, restaurant: 'Quán Cơm Tấm Sài Gòn', calories: 650},
+            {id: 2, name: 'Phở bò tái', category: 'pho', price: 50000, image: '🍜', rating: 4.9, orders: 3421, tags: ['bestseller'], discount: 0, restaurant: 'Phở Hà Nội', calories: 450},
+            {id: 3, name: 'Bánh mì thịt nướng', category: 'banh', price: 25000, image: '🥖', rating: 4.7, orders: 1876, tags: ['new'], discount: 10, restaurant: 'Bánh Mì Huỳnh Hoa', calories: 420},
+            {id: 4, name: 'Bún chả Hà Nội', category: 'pho', price: 55000, image: '🍲', rating: 4.8, orders: 2134, tags: ['bestseller'], discount: 0, restaurant: 'Bún Chả 34', calories: 520},
+            {id: 5, name: 'Cơm gà xối mọi', category: 'com', price: 40000, image: '🍗', rating: 4.6, orders: 1543, tags: [], discount: 15, restaurant: 'Cơm Gà Ba Bể', calories: 580},
+            {id: 6, name: 'Bánh xèo miền Tây', category: 'banh', price: 35000, image: '🥞', rating: 4.5, orders: 987, tags: ['new'], discount: 0, restaurant: 'Bánh Xèo Mười Xiềm', calories: 380},
+            {id: 7, name: 'Lẩu Thái hải sản', category: 'lau', price: 180000, image: '🍲', rating: 4.9, orders: 1234, tags: ['bestseller', 'new'], discount: 0, restaurant: 'Lẩu Thái Tomyum', calories: 750},
+            {id: 8, name: 'Cà phê sữa đá', category: 'uong', price: 20000, image: '☕', rating: 4.7, orders: 4321, tags: ['bestseller'], discount: 0, restaurant: 'Highlands Coffee', calories: 180},
+            {id: 9, name: 'Trà sữa trân châu', category: 'uong', price: 35000, image: '🧋', rating: 4.6, orders: 3876, tags: [], discount: 20, restaurant: 'Gong Cha', calories: 320},
+            {id: 10, name: 'Bò nướng lá lốt', category: 'nuong', price: 65000, image: '🥩', rating: 4.8, orders: 1654, tags: ['bestseller'], discount: 0, restaurant: 'Quán Nướng Sài Gòn', calories: 480},
+            {id: 11, name: 'Gỏi cuốn tôm thịt', category: 'banh', price: 30000, image: '🌯', rating: 4.5, orders: 876, tags: [], discount: 0, restaurant: 'Quán Nem Nướng', calories: 280},
+            {id: 12, name: 'Bún bò Huế', category: 'pho', price: 48000, image: '🍜', rating: 4.7, orders: 1987, tags: [], discount: 0, restaurant: 'Bún Bò Huế O Lê', calories: 550},
+            {id: 13, name: 'Cơm chiên dương châu', category: 'com', price: 42000, image: '🍛', rating: 4.6, orders: 1432, tags: ['new'], discount: 0, restaurant: 'Cơm Chiên 168', calories: 620},
+            {id: 14, name: 'Mì Ý sốt bò bằm', category: 'nuong', price: 58000, image: '🍝', rating: 4.7, orders: 1123, tags: [], discount: 10, restaurant: 'Pizza 4P\'s', calories: 680},
+            {id: 15, name: 'Pizza hải sản', category: 'nuong', price: 120000, image: '🍕', rating: 4.8, orders: 876, tags: ['new'], discount: 0, restaurant: 'Pizza Hut', calories: 850},
+            {id: 16, name: 'Sinh tố bơ', category: 'uong', price: 30000, image: '🥤', rating: 4.5, orders: 1234, tags: [], discount: 0, restaurant: 'Sinh Tố Anh Hùng', calories: 240},
+            {id: 17, name: 'Lẩu nấm chay', category: 'lau', price: 150000, image: '🍄', rating: 4.6, orders: 654, tags: ['new'], discount: 15, restaurant: 'Quán Chay Thiên Ý', calories: 420},
+            {id: 18, name: 'Cơm sườn nướng', category: 'com', price: 48000, image: '🍖', rating: 4.8, orders: 2876, tags: ['bestseller'], discount: 0, restaurant: 'Cơm Sườn Phú Yên', calories: 670},
+            {id: 19, name: 'Bánh cuốn Thanh Trì', category: 'banh', price: 32000, image: '🥟', rating: 4.6, orders: 987, tags: [], discount: 0, restaurant: 'Bánh Cuốn Thanh Trì', calories: 310},
+            {id: 20, name: 'Nước chanh dây', category: 'uong', price: 18000, image: '🍋', rating: 4.5, orders: 2345, tags: [], discount: 0, restaurant: 'Trà Chanh Xưa', calories: 120},
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        let currentFilter = 'all';
+        let currentSort = 'default';
+        let filteredFoods = [...foods];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            updateCartCount();
+            updateFavoriteCount();
+            startAISuggestions();
+        });
+
+        // Render Products
+        function renderProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+            
+            filteredFoods.forEach((food, index) => {
+                const isFavorite = favorites.some(f => f.id === food.id);
+                const finalPrice = food.discount > 0 ? food.price * (1 - food.discount/100) : food.price;
+                
+                const card = document.createElement('div');
+                card.className = 'food-card bg-white rounded-xl shadow-md overflow-hidden animate-fade-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <div class="relative">
+                        <div class="text-8xl text-center py-8 bg-gradient-to-br from-green-50 to-green-100">
+                            ${food.image}
+                        </div>
+                        ${food.discount > 0 ? `
+                            <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                -${food.discount}%
+                            </div>
+                        ` : ''}
+                        ${food.tags.includes('bestseller') ? `
+                            <div class="absolute top-2 right-2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                <i class="fas fa-fire mr-1"></i>Hot
+                            </div>
+                        ` : ''}
+                        ${food.tags.includes('new') ? `
+                            <div class="absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                                <i class="fas fa-sparkles mr-1"></i>Mới
+                            </div>
+                        ` : ''}
+                        <button onclick="toggleFavorite(${food.id})" class="absolute bottom-2 right-2 bg-white hover:bg-red-50 rounded-full p-3 shadow-lg transition">
+                            <i class="fas fa-heart ${isFavorite ? 'text-red-500' : 'text-gray-300'}"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg mb-2">${food.name}</h3>
+                        <div class="flex items-center mb-2">
+                            <div class="flex text-yellow-400">
+                                ${[...Array(5)].map((_, i) => `<i class="fas fa-star ${i < Math.floor(food.rating) ? '' : 'text-gray-300'}"></i>`).join('')}
+                            </div>
+                            <span class="text-sm text-gray-600 ml-2">(${food.rating})</span>
+                        </div>
+                        <div class="text-sm text-gray-500 mb-3">
+                            <i class="fas fa-shopping-bag mr-1"></i>${food.orders} đã đặt
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div>
+                                ${food.discount > 0 ? `
+                                    <span class="text-gray-400 line-through text-sm">${food.price.toLocaleString()}đ</span>
+                                    <span class="text-green-600 font-bold text-xl ml-2">${finalPrice.toLocaleString()}đ</span>
+                                ` : `
+                                    <span class="text-green-600 font-bold text-xl">${food.price.toLocaleString()}đ</span>
+                                `}
+                            </div>
+                            <button onclick="addToCart(${food.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter Functions
+        function filterByCategory(category) {
+            currentFilter = category;
+            
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            if (category === 'all') {
+                filteredFoods = [...foods];
+            } else if (category === 'bestseller') {
+                filteredFoods = foods.filter(f => f.tags.includes('bestseller'));
+            } else if (category === 'new') {
+                filteredFoods = foods.filter(f => f.tags.includes('new'));
+            } else if (category === 'sale') {
+                filteredFoods = foods.filter(f => f.discount > 0);
+            } else {
+                filteredFoods = foods.filter(f => f.category === category);
+            }
+            
+            sortProducts(currentSort);
+        }
+
+        function sortProducts(sortType) {
+            currentSort = sortType;
+            
+            switch(sortType) {
+                case 'price-asc':
+                    filteredFoods.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-desc':
+                    filteredFoods.sort((a, b) => b.price - a.price);
+                    break;
+                case 'name':
+                    filteredFoods.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'rating':
+                    filteredFoods.sort((a, b) => b.rating - a.rating);
+                    break;
+            }
+            
+            renderProducts();
+        }
+
+        function searchFood() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query === '') {
+                filteredFoods = [...foods];
+            } else {
+                filteredFoods = foods.filter(f => f.name.toLowerCase().includes(query));
+            }
+            renderProducts();
+        }
+
+        // Cart Functions
+        function addToCart(foodId) {
+            const food = foods.find(f => f.id === foodId);
+            const existingItem = cart.find(item => item.id === foodId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({...food, quantity: 1});
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            
+            // Show notification
+            showNotification('✅ Đã thêm vào giỏ hàng!');
+        }
+
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        function goToCart() {
+            window.location.href = 'giohang.html';
+        }
+
+        // Favorite Functions
+        function toggleFavorite(foodId) {
+            const food = foods.find(f => f.id === foodId);
+            const index = favorites.findIndex(f => f.id === foodId);
+            
+            if (index > -1) {
+                favorites.splice(index, 1);
+                showNotification('💔 Đã xóa khỏi yêu thích');
+            } else {
+                favorites.push(food);
+                showNotification('❤️ Đã thêm vào yêu thích');
+            }
+            
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoriteCount();
+            renderProducts();
+        }
+
+        function updateFavoriteCount() {
+            document.getElementById('favoriteCount').textContent = favorites.length;
+        }
+
+        function showFavorites() {
+            if (favorites.length === 0) {
+                showNotification('💡 Chưa có món ăn yêu thích');
+                return;
+            }
+            filteredFoods = favorites;
+            renderProducts();
+        }
+
+        // AI Suggestions
+        function startAISuggestions() {
+            // Show first suggestion after 3 seconds
+            setTimeout(showAISuggestion, 3000);
+            
+            // Then show every 15 seconds
+            setInterval(showAISuggestion, 15000);
+        }
+
+        function showAISuggestion() {
+            const box = document.getElementById('aiSuggestion');
+            const content = document.getElementById('aiSuggestionContent');
+            
+            // Get random bestseller
+            const bestsellers = foods.filter(f => f.tags.includes('bestseller'));
+            const randomFood = bestsellers[Math.floor(Math.random() * bestsellers.length)];
+            
+            content.innerHTML = `
+                <div class="bg-white/20 rounded-lg p-3">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-4xl">${randomFood.image}</div>
+                        <div>
+                            <h4 class="font-bold">${randomFood.name}</h4>
+                            <p class="text-sm text-purple-200">${randomFood.orders} người đã đặt</p>
+                            <div class="flex items-center mt-1">
+                                <span class="text-yellow-300 text-sm">★ ${randomFood.rating}</span>
+                                <span class="text-white font-bold ml-2">${randomFood.price.toLocaleString()}đ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="addToCart(${randomFood.id}); closeAISuggestion();" class="w-full bg-white text-purple-600 font-bold py-2 px-4 rounded-lg mt-3 hover:bg-purple-50 transition">
+                        <i class="fas fa-cart-plus mr-2"></i>Thêm vào giỏ
+                    </button>
+                </div>
+            `;
+            
+            box.classList.remove('hidden');
+        }
+
+        function closeAISuggestion() {
+            document.getElementById('aiSuggestion').classList.add('hidden');
+        }
+
+        // Helper Functions
+        function toggleCategories() {
+            const dropdown = document.getElementById('categoriesDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-24 right-6 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-in';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('categoriesDropdown');
+            const button = event.target.closest('button');
+            
+            if (!dropdown.contains(event.target) && button?.textContent !== 'Danh mục') {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

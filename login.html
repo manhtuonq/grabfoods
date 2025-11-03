@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodMood - Đăng nhập & Đăng ký</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #00b14f 0%, #00d170 100%);
+        }
+        .input-field:focus {
+            border-color: #00b14f;
+            box-shadow: 0 0 0 3px rgba(0, 177, 79, 0.1);
+        }
+        .slide-in {
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-5xl">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+            <div class="grid md:grid-cols-2">
+                <!-- Left Side - Branding -->
+                <div class="gradient-bg p-12 text-white flex flex-col justify-center relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
+                    <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="mb-8">
+                            <svg class="h-16" viewBox="0 0 200 50" fill="none">
+                                <text x="0" y="35" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">FoodMood</text>
+                            </svg>
+                        </div>
+                        
+                        <h2 class="text-4xl font-bold mb-4">Chào mừng đến với FoodMood!</h2>
+                        <p class="text-lg opacity-90 mb-8">Đặt đồ ăn thông minh, giao hàng nhanh chóng</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-bolt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">Giao siêu nhanh</h3>
+                                    <p class="text-sm opacity-75">Trong vòng 30 phút</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-shield-alt text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">An toàn tuyệt đối</h3>
+                                    <p class="text-sm opacity-75">Đảm bảo vệ sinh thực phẩm</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-percentage text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">Ưu đãi khủng</h3>
+                                    <p class="text-sm opacity-75">Giảm giá lên đến 50%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Forms -->
+                <div class="p-12">
+                    <!-- Login Form -->
+                    <div id="loginForm" class="slide-in">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Đăng nhập</h3>
+                        <p class="text-gray-600 mb-8">Chào mừng bạn quay trở lại!</p>
+                        
+                        <form onsubmit="handleLogin(event)">
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-envelope mr-2 text-green-600"></i>Email hoặc Số điện thoại
+                                </label>
+                                <input type="text" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập email hoặc số điện thoại" required>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-lock mr-2 text-green-600"></i>Mật khẩu
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="loginPassword" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập mật khẩu" required>
+                                    <button type="button" onclick="togglePassword('loginPassword')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center justify-between mb-6">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500">
+                                    <span class="ml-2 text-sm text-gray-600">Ghi nhớ đăng nhập</span>
+                                </label>
+                                <a href="#" class="text-sm text-green-600 hover:text-green-700 font-semibold">Quên mật khẩu?</a>
+                            </div>
+                            
+                            <button type="submit" class="w-full gradient-bg text-white py-3 rounded-xl font-bold text-lg hover:shadow-lg transform hover:scale-105 transition duration-300">
+                                <i class="fas fa-sign-in-alt mr-2"></i>Đăng nhập
+                            </button>
+                        </form>
+                        
+                        <div class="mt-8">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-4 bg-white text-gray-500">Hoặc đăng nhập với</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-3 gap-3">
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition">
+                                    <i class="fab fa-facebook-f text-blue-600 text-xl"></i>
+                                </button>
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-red-500 hover:bg-red-50 transition">
+                                    <i class="fab fa-google text-red-600 text-xl"></i>
+                                </button>
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-600 hover:bg-gray-50 transition">
+                                    <i class="fab fa-apple text-gray-800 text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-center mt-8 text-gray-600">
+                            Chưa có tài khoản? 
+                            <button onclick="showRegister()" class="text-green-600 hover:text-green-700 font-bold">Đăng ký ngay</button>
+                        </p>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div id="registerForm" class="hidden">
+                        <h3 class="text-3xl font-bold text-gray-800 mb-2">Đăng ký</h3>
+                        <p class="text-gray-600 mb-8">Tạo tài khoản mới để bắt đầu!</p>
+                        
+                        <form onsubmit="handleRegister(event)">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-user mr-2 text-green-600"></i>Họ và tên
+                                </label>
+                                <input type="text" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập họ và tên" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-phone mr-2 text-green-600"></i>Số điện thoại
+                                </label>
+                                <input type="tel" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập số điện thoại" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-envelope mr-2 text-green-600"></i>Email
+                                </label>
+                                <input type="email" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập email" required>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-lock mr-2 text-green-600"></i>Mật khẩu
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="registerPassword" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Tạo mật khẩu" required>
+                                    <button type="button" onclick="togglePassword('registerPassword')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Tối thiểu 8 ký tự, bao gồm chữ và số</p>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="block text-gray-700 font-semibold mb-2">
+                                    <i class="fas fa-lock mr-2 text-green-600"></i>Xác nhận mật khẩu
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="confirmPassword" class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none transition" placeholder="Nhập lại mật khẩu" required>
+                                    <button type="button" onclick="togglePassword('confirmPassword')" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label class="flex items-start">
+                                    <input type="checkbox" class="w-4 h-4 mt-1 text-green-600 border-gray-300 rounded focus:ring-green-500" required>
+                                    <span class="ml-2 text-sm text-gray-600">
+                                        Tôi đồng ý với <a href="#" class="text-green-600 hover:text-green-700 font-semibold">Điều khoản sử dụng</a> và <a href="#" class="text-green-600 hover:text-green-700 font-semibold">Chính sách bảo mật</a>
+                                    </span>
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="w-full gradient-bg text-white py-3 rounded-xl font-bold text-lg hover:shadow-lg transform hover:scale-105 transition duration-300">
+                                <i class="fas fa-user-plus mr-2"></i>Đăng ký
+                            </button>
+                        </form>
+                        
+                        <div class="mt-8">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-300"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-4 bg-white text-gray-500">Hoặc đăng ký với</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-6 grid grid-cols-3 gap-3">
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition">
+                                    <i class="fab fa-facebook-f text-blue-600 text-xl"></i>
+                                </button>
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-red-500 hover:bg-red-50 transition">
+                                    <i class="fab fa-google text-red-600 text-xl"></i>
+                                </button>
+                                <button class="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-xl hover:border-gray-600 hover:bg-gray-50 transition">
+                                    <i class="fab fa-apple text-gray-800 text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <p class="text-center mt-8 text-gray-600">
+                            Đã có tài khoản? 
+                            <button onclick="showLogin()" class="text-green-600 hover:text-green-700 font-bold">Đăng nhập ngay</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-8 max-w-md mx-4 text-center slide-in">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-4xl text-green-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">Thành công!</h3>
+                <p class="text-gray-600 mb-6" id="successText"></p>
+                <button onclick="closeSuccess()" class="gradient-bg text-white px-8 py-3 rounded-xl font-bold hover:shadow-lg transition">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('slide-in');
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('loginForm').classList.add('slide-in');
+        }
+
+        function togglePassword(id) {
+            const input = document.getElementById(id);
+            const icon = event.currentTarget.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            showSuccessMessage('Đăng nhập thành công! Đang chuyển đến trang chủ...');
+            setTimeout(() => {
+                // Redirect to homepage
+                window.location.href = '/';
+            }, 2000);
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                alert('Mật khẩu xác nhận không khớp!');
+                return;
+            }
+            
+            showSuccessMessage('Đăng ký thành công! Chào mừng bạn đến với FoodMood!');
+            setTimeout(() => {
+                showLogin();
+                closeSuccess();
+            }, 2000);
+        }
+
+        function showSuccessMessage(text) {
+            document.getElementById('successText').textContent = text;
+            document.getElementById('successMessage').classList.remove('hidden');
+        }
+
+        function closeSuccess() {
+            document.getElementById('successMessage').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
