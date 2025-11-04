@@ -477,14 +477,14 @@ function suggestBySeason(season) {
 
     <script>
         const foods = [
-            { id: 1, name: 'Phở Bò Hà Nội', price: 50000, calories: 450, category: ['man', 'bac'], image: 'https://images.unsplash.com/photo-1591814468924-caf88d1232e1?w=400&q=80', rating: 4.8, restaurant: 'Phở Hà Nội', prepTime: '15-20 phút', discount: 10 },
+            { id: 1, name: 'Phở Bò Hà Nội', price: 50000, calories: 450, category: ['man', 'bac'], image: 'phobo.jpg', rating: 4.8, restaurant: 'Phở Hà Nội', prepTime: '15-20 phút', discount: 10 },
             { id: 2, name: 'Bún Bò Huế', price: 45000, calories: 520, category: ['man', 'cay', 'trung'], image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSt7FebUSyPtgYcfk_2bRAce6ucZWKGv1XJcBpG21aLV8q_I2oZhCAzPKKfaVTLlvHibUpQIXYz_NJQQLeMxhdCHfc0zRd2yLrws4mUY-mB&s=10', rating: 4.9, restaurant: 'Bún Bò Cô Hai', prepTime: '20-25 phút' },
             { id: 3, name: 'Bánh Mì Pate', price: 25000, calories: 350, category: ['man', 'nam'], image: 'https://images.unsplash.com/photo-1598511726623-d2e9996892f0?w=400&q=80', rating: 4.7, restaurant: 'Bánh Mì Hòa Mã', prepTime: '5-10 phút', discount: 15 },
-            { id: 4, name: 'Cơm Tấm Sườn', price: 40000, calories: 600, category: ['man', 'nam'], image: 'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?w=400&q=80', rating: 4.6, restaurant: 'Cơm Tấm Sài Gòn', prepTime: '15-20 phút' },
-            { id: 5, name: 'Chè Thái', price: 20000, calories: 200, category: ['ngot', 'nam'], image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80', rating: 4.5, restaurant: 'Chè Ngon', prepTime: '5-10 phút' },
+            { id: 4, name: 'Cơm Tấm Sườn', price: 40000, calories: 600, category: ['man', 'nam'], image: 'comtam.jpg', rating: 4.6, restaurant: 'Cơm Tấm Sài Gòn', prepTime: '15-20 phút' },
+            { id: 5, name: 'Chè Thái', price: 20000, calories: 200, category: ['ngot', 'nam'], image: 'chethai.jpg', rating: 4.5, restaurant: 'Chè Ngon', prepTime: '5-10 phút' },
             { id: 6, name: 'Bánh Flan Caramen', price: 15000, calories: 180, category: ['ngot'], image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSqxWxvIiwT9cCtkB1TvD_3e3kflzXoYVRYZ1Z7huhf0O5uGDrLEKA6sSKFx1Y37eO5c0cyqq_rI7dlYk-QrD27dGoqnuTsKZUdcLKCSicZsg&s=10', rating: 4.4, restaurant: 'Tiệm Bánh Ngọt', prepTime: '5 phút' },
             { id: 7, name: 'Lẩu Thái Tomyum', price: 150000, calories: 700, category: ['cay', 'man'], image: 'https://hungtruongsa.vn/wp-content/uploads/2024/07/cach-lam-lau-tomyum-nuoc-dua-1.jpg', rating: 4.9, restaurant: 'Lẩu Thái Lan', prepTime: '25-30 phút', discount: 20 },
-            { id: 8, name: 'Gỏi Cuốn Tôm Thịt', price: 30000, calories: 150, category: ['man', 'nam'], image: 'https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?w=400&q=80', rating: 4.7, restaurant: 'Quán Gỏi Việt', prepTime: '10-15 phút' }
+            { id: 8, name: 'Gỏi Cuốn Tôm Thịt', price: 30000, calories: 150, category: ['man', 'nam'], image: 'goicuon.jpg', rating: 4.7, restaurant: 'Quán Gỏi Việt', prepTime: '10-15 phút' }
         ];
 
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
