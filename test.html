@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xóa Phông Nền Ảnh - AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9ff;
+            position: relative;
+        }
+
+        .upload-area:hover {
+            background: #eef1ff;
+            border-color: #764ba2;
+            transform: scale(1.01);
+        }
+
+        .upload-area.drag-over {
+            background: #e0e7ff;
+            border-color: #4338ca;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .upload-area p {
+            color: #555;
+            font-size: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .upload-area small {
+            color: #888;
+            font-size: 14px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .image-container {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .image-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .image-box {
+            text-align: center;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .image-box h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.3em;
+        }
+
+        .image-preview {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            background: repeating-conic-gradient(#e0e0e0 0% 25%, #f5f5f5 0% 50%) 50% / 20px 20px;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-box img {
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px 20px;
+            display: none;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #555;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .loading small {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            border: 2px solid #fcc;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: #e7f3ff;
+            color: #0066cc;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .image-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .upload-area {
+                padding: 40px 15px;
+            }
+
+            .upload-icon {
+                font-size: 50px;
+            }
+
+            button {
+                padding: 12px 30px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Xóa Phông Nền Ảnh</h1>
+        <p class="subtitle">Công nghệ AI - Miễn phí - Không giới hạn</p>
+
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">🖼️</div>
+            <p>Kéo thả ảnh vào đây hoặc nhấn để chọn</p>
+            <small>Hỗ trợ: JPG, PNG, WEBP • Kích thước tối ưu: dưới 5MB</small>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Đang xử lý ảnh với AI...</p>
+            <small>Lần đầu tiên có thể mất 10-30 giây để tải mô hình AI</small>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="image-container" id="imageContainer">
+            <div class="image-wrapper">
+                <div class="image-box">
+                    <h3>📷 Ảnh gốc</h3>
+                    <div class="image-preview">
+                        <img id="originalImage" src="" alt="Ảnh gốc">
+                    </div>
+                </div>
+                <div class="image-box">
+                    <h3>✨ Ảnh đã xóa nền</h3>
+                    <div class="image-preview">
+                        <img id="processedImage" src="" alt="Ảnh đã xóa nền">
+                    </div>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn-primary" id="downloadBtn">
+                    <span>💾</span> Tải xuống ảnh PNG
+                </button>
+                <button class="btn-secondary" id="newImageBtn">
+                    <span>🔄</span> Chọn ảnh khác
+                </button>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <span class="info-badge">✅ Xử lý ngay trên trình duyệt - Bảo mật tuyệt đối</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import removeBackground from 'https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.4.5/+esm';
+
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const imageContainer = document.getElementById('imageContainer');
+        const originalImage = document.getElementById('originalImage');
+        const processedImage = document.getElementById('processedImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const newImageBtn = document.getElementById('newImageBtn');
+        const progressFill = document.getElementById('progressFill');
+
+        let processedImageUrl = null;
+        let originalFileName = '';
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageUpload(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageUpload(file);
+            }
+        });
+
+        async function handleImageUpload(file) {
+            originalFileName = file.name.replace(/\.[^/.]+$/, '');
+            
+            // Show original image
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                originalImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Hide previous results and show loading
+            imageContainer.style.display = 'none';
+            error.style.display = 'none';
+            loading.style.display = 'block';
+            progressFill.style.width = '0%';
+
+            // Simulate progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 85) progress = 85;
+                progressFill.style.width = progress + '%';
+            }, 800);
+
+            try {
+                // Remove background using AI
+                const imageUrl = URL.createObjectURL(file);
+                const blob = await removeBackground(imageUrl, {
+                    progress: (key, current, total) => {
+                        const percent = 85 + ((current / total) * 15);
+                        progressFill.style.width = percent + '%';
+                    }
+                });
+
+                clearInterval(progressInterval);
+                progressFill.style.width = '100%';
+
+                // Create URL for processed image
+                processedImageUrl = URL.createObjectURL(blob);
+                processedImage.src = processedImageUrl;
+
+                // Clean up
+                URL.revokeObjectURL(imageUrl);
+
+                loading.style.display = 'none';
+                imageContainer.style.display = 'block';
+
+            } catch (err) {
+                clearInterval(progressInterval);
+                loading.style.display = 'none';
+                showError('Lỗi khi xử lý ảnh: ' + err.message + '. Vui lòng thử lại với ảnh khác hoặc ảnh có kích thước nhỏ hơn.');
+                console.error(err);
+            }
+        }
+
+        downloadBtn.addEventListener('click', () => {
+            if (processedImageUrl) {
+                const a = document.createElement('a');
+                a.href = processedImageUrl;
+                a.download = originalFileName + '_no_bg_' + Date.now() + '.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        });
+
+        newImageBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            imageContainer.style.display = 'none';
+            error.style.display = 'none';
+            if (processedImageUrl) {
+                URL.revokeObjectURL(processedImageUrl);
+                processedImageUrl = null;
+            }
+            originalImage.src = '';
+            processedImage.src = '';
+            progressFill.style.width = '0%';
+        });
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+            setTimeout(() => {
+                error.style.display = 'none';
+            }, 8000);
+        }
+    </script>
+</body>
+</html>
